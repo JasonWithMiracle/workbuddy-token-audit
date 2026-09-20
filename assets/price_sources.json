@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "purpose": "厂商官方定价页登记表。每次刷新价格时按此表逐一定位目标页面，避免临场找页。",
+  "price_priority": "模型原厂价优先；平台价（腾讯云 TokenHub）作交叉校验",
+  "unit": "CNY / 百万 tokens",
+  "calendar_rule": "节假日与调休表按年维护，以国务院办公厅发布日为更新标准（通常前一年 11 月发布次年安排）",
+  "vendors": {
+    "hunyuan": {
+      "name": "腾讯混元",
+      "note": "混元为腾讯自研，原厂即腾讯；腾讯云 TokenHub 价与原厂公示一致",
+      "models": ["hy3", "hy3-x", "hy4-preview"],
+      "sources": [
+        {
+          "label": "混元官网 Hy3 发布页",
+          "url": "https://hy.tencent.com/research/hy3",
+          "primary": true
+        },
+        {
+          "label": "腾讯云智能体开发平台 计费概述",
+          "url": "https://cloud.tencent.com/document/product/1759/127342",
+          "primary": false,
+          "note": "含 Hunyuan 模型表格，且有 DeepSeek 峰谷列可交叉校验"
+        }
+      ],
+      "extract_hint": "定位 Hunyuan 模型表格：Hy3 与 Hy4 preview 的 输入 / 输出 / 缓存 单价",
+      "must_contain": ["Hy3", "Hy4 preview"],
+      "expect_anchors": ["Hy3", "输出", "缓存"],
+      "kind": "flat"
+    },
+    "deepseek": {
+      "name": "DeepSeek 原厂",
+      "note": "存在峰谷分时；高峰时段为工作日 09:00-12:00、14:00-18:00（北京时间），高峰价 = 空闲价 × 2",
+      "models": ["deepseek-v4-flash", "deepseek-v4.1-flash", "deepseek-v4-pro", "deepseek-flash"],
+      "sources": [
+        {
+          "label": "DeepSeek 官方 API 文档 Models & Pricing（中文）",
+          "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing",
+          "primary": true
+        },
+        {
+          "label": "DeepSeek 官方 API 文档 Models & Pricing（英文）",
+          "url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "primary": false,
+          "note": "英文页含工作日限制与排除中国法定假日的明确表述"
+        }
+      ],
+      "extract_hint": "定位 价格 表：百万tokens输入(缓存命中/未命中) 与 输出，分别取 空闲时段 与 高峰时段 两组",
+      "must_contain": ["高峰", "空闲"],
+      "expect_anchors": ["高峰时段", "空闲时段", "缓存命中", "缓存未命中"],
+      "kind": "split"
+    },
+    "zhipu": {
+      "name": "智谱 BigModel",
+      "note": "按输入长度分段计价（部分模型还叠加输出长度分段），非分时",
+      "models": ["glm-5.3", "glm-5.3-flash", "glm-5.2", "glm-5.0-turbo", "glm-4.7", "glm-4.6v", "glm-4.5-air"],
+      "sources": [
+        {
+          "label": "智谱 BigModel 定价页",
+          "url": "https://open.bigmodel.cn/pricing",
+          "primary": true
+        },
+        {
+          "label": "智谱 AI 开放文档 API 定价",
+          "url": "https://docs.bigmodel.cn/cn/guide/start/pricing",
+          "primary": false
+        }
+      ],
+      "extract_hint": "定位 文本模型 价目表：输入长度档位 / 输入单价 / 输出单价 / 缓存命中",
+      "must_contain": ["GLM", "输入"],
+      "expect_anchors": ["输入长度", "输出单价", "缓存命中"],
+      "kind": "tiered"
+    },
+    "minimax": {
+      "name": "MiniMax",
+      "models": ["MiniMax-M3", "minimax"],
+      "sources": [
+        {
+          "label": "MiniMax 开放平台 定价",
+          "url": "https://platform.minimaxi.com/document/price",
+          "primary": true
+        }
+      ],
+      "extract_hint": "定位 MiniMax-M3 的 输入 / 输出 / 缓存 单价",
+      "must_contain": ["MiniMax"],
+      "expect_anchors": ["输入", "输出"],
+      "kind": "flat"
+    },
+    "sensenova": {
+      "name": "商汤 SenseNova",
+      "note": "公测期 6.8 Flash-Lite 官方标价全 0（免费额度），需持续关注是否转正式收费",
+      "models": ["sensenova-6.8-flash-lite"],
+      "sources": [
+        {
+          "label": "商汤 SenseNova 平台文档",
+          "url": "https://platform.sensenova.cn/docs",
+          "primary": true
+        },
+        {
+          "label": "商汤 Token Plan",
+          "url": "https://www.sensenova.cn/token-plan",
+          "primary": false
+        }
+      ],
+      "extract_hint": "确认 sensenova-6.8-flash-lite 是否仍为 $0（公测免费），以及是否已转正式收费",
+      "must_contain": ["sensenova"],
+      "expect_anchors": ["flash-lite"],
+      "kind": "flat"
+    },
+    "mistral": {
+      "name": "Mistral AI",
+      "note": "官方以 USD 计价，落表时按汇率折算为 CNY（汇率需随刷新一并更新）",
+      "fx_usd_cny": 7.2,
+      "models": ["mistral-large", "mistral-medium"],
+      "sources": [
+        {
+          "label": "Mistral 官方定价页",
+          "url": "https://mistral.ai/pricing/api",
+          "primary": true
+        }
+      ],
+      "extract_hint": "定位 Mistral Large 3 与 Mistral Medium 3.x 的 Input / Output 单价（USD per 1M tokens）",
+      "must_contain": ["Mistral"],
+      "expect_anchors": ["Input", "Output"],
+      "kind": "flat"
+    }
+  }
+}
