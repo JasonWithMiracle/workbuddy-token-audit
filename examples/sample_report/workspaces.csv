@@ -1,0 +1,7 @@
+﻿workspace,sessions,reqs,total_tokens,cache_hit_rate,peak_reqs,off_reqs,cost_cny
+backend-refactor,9,3505,397191714,92.55,329,0,120.9669
+data-pipeline,7,2905,335122471,95.61,271,51,94.7016
+docs-site,5,2340,307877812,94.75,0,0,89.106
+infra-tools,3,1599,185711457,96.92,0,0,52.772
+mobile-app,4,744,67731657,94.21,0,0,19.5083
+research-notes,2,475,64069762,95.35,0,0,26.4099
