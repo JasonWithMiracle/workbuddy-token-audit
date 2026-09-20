@@ -94,6 +94,17 @@ python <skill>/scripts/estimate_report.py --workdir <dir>     # 出报告
 - 也可直接改 `assets/price_table.template.json` 并提交
 - 自己用：改 `assets/price_table.json`（该文件是实例，不入库）
 
+## 关于本项目（Vibe Coding 声明）
+
+**本项目是 Vibe Coding 的产物** —— 代码主要由 AI 助手生成，人工负责需求定义、计价口径决策、
+方案拍板与结果验收，**未做逐行代码审查**。
+
+已有质量保障：46 个单元测试、独立实现复算校验（`verify_cost.py`）、三平台 CI、提交前敏感扫描。
+但这些不等于「无缺陷」：**异常处理、边界条件与跨平台细节请自行评估**，
+用于关键决策前建议先读 `scripts/pricing_core.py`（核心计价逻辑，约 120 行）。
+
+本项目按 MIT 许可证「按原样」提供，**不附带任何担保**。完整声明见仓库 README「关于本项目」章节。
+
 ## 注意事项
 
 - 仅解析**本机自有数据**，不发起任何上传
