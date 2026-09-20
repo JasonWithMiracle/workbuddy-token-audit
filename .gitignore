@@ -1,0 +1,35 @@
+# ── 产出数据（含真实任务名与工作空间名，切勿提交）──
+token-audit-output/
+/out/
+/output/
+anon/
+
+# 报告产物（仅忽略根目录与本地产出；examples/ 下的**脱敏示例**需要入库）
+/WorkBuddy-Token消耗调研报告.html
+/WorkBuddy-Token消耗调研报告.md
+/dashboard.html
+
+# 价格表运行时实例
+# 注意：assets/price_table.template.json 是模板，必须提交；
+#       assets/price_table.json 是本机实例（含核实记录），不提交
+assets/price_table.json
+assets/price_refresh_log.json
+
+# plan 模式的本地日志
+.workbuddy/
+consumption_log.json
+*.local.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
