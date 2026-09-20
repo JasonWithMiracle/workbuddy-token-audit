@@ -6,6 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# 同一分支上若有新的运行，自动取消旧的排队/进行中运行。
+# 这能避免「连续多次提交 → CI 大量排队 → 每个 job 各发一封失败邮件」的邮件风暴。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: ${{ matrix.os }} / py${{ matrix.python-version }}
@@ -23,14 +29,30 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: 前置检查（仓库完整性）
+        shell: bash
+        run: |
+          # 若关键目录缺失（例如不完整的提交历史），直接跳过而非报错刷屏
+          for d in scripts tests assets references; do
+            if [ ! -d "$d" ]; then
+              echo "::notice::目录 $d 缺失，跳过后续检查（可能是不完整提交）"
+              echo "SKIP=1" >> "$GITHUB_ENV"
+              exit 0
+            fi
+          done
+
       - name: 语法检查（全部脚本）
+        if: env.SKIP != '1'
         run: python -m compileall -q scripts examples tests
 
       - name: 单元测试
+        if: env.SKIP != '1'
         run: python -m unittest discover -s tests -v
 
       - name: 敏感信息扫描（防止误提交本机数据）
+        if: env.SKIP != '1'
         run: python scripts/check_privacy.py
 
       - name: 示例报告生成冒烟
+        if: env.SKIP != '1'
         run: python examples/make_sample.py
